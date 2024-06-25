@@ -1,5 +1,7 @@
 import './App.css'
 import {ReactElement, useEffect, useState} from "react";
+import ArrowBlock from "./components/ArrowBlocks.tsx";
+import SizeBlock from "./components/SizeBlock.tsx";
 
 function MainBox() {
     return (
@@ -31,7 +33,7 @@ function  OccurrenceItem({oip,itemPosition, custom1, custom2}: {oip?: Occurrence
         <>
             <div className={"flex"}>
                 <div className={"!aspect-square"}>
-                    {!custom1?<ABlocks top={isFirst} middle={isMiddle} bottom={isLast}/>:custom1}
+                    {!custom1?<ArrowBlock direction={isFirst? "up": (isMiddle?"center": (isLast?"down": "extra"))}/>:custom1}
                 </div>
                 <div>
                     {!custom2?
@@ -68,17 +70,18 @@ function Occurrences() {
                                        itemPosition={index === 0 ? -1 : (index === occurrences.length - 1 ? 0 : 0)}
                                        oip={occurrence}/>
             })}
-            <OccurrenceItem itemPosition={NaN} custom1={<ABlocks top={false} bottom={false} middle={false}/>}
-                            custom2={<>
-                                <>
-                                    <div className={"flex justify-between px-5 gap-2 items-center text-4xl"}>
+            <OccurrenceItem itemPosition={NaN} custom1={<ArrowBlock  direction={"extra"}/>}
+                            custom2={<div className={"flex px-5 gap-5"}>
+                                <div className={"flex justify-center items-center text-3xl"}>
+                                    +
+                                </div>
+                                <div className={"text-neutral-500"}>
+                                    <div className={"flex justify-between gap-2 items-center text-2xl"}>
                                         <div>New Occurrence</div>
                                     </div>
-                                    <div className={"px-5 text-right"}>Click to add a new occurrence to this counter!
-                                    </div>
-                                </>
-                            </>}/>
-            <div className={"h-0 w-full border-2 mt-[5rem]"}/>
+                                    <div className={"text-right text-sm"}>Click to add a new occurrence to this counter!</div>
+                                </div>
+                            </div>}/>
         </div>
     </>
     )
@@ -90,42 +93,11 @@ function App() {
         <div className={"flex flex-col items-center min-h-full mt-[25vh]"}>
             <MainBox/>
             <Occurrences/>
+            <SizeBlock w={60}>
+                <div className={"h-0 w-full border-[1px] mt-[5rem] border-neutral-500"}/>
+            </SizeBlock>
         </div>
     )
 }
 
 export default App
-
-function ABlocks({top,middle,bottom}: {top: boolean, middle: boolean, bottom: boolean}) {
-    if (middle) {
-        return (
-            <div className={"flex flex-col items-start h-full w-[32px]"}>
-                <div className={"border-l-4 h-full w-full flex items-center"}>
-                    <div className={"border-2 w-full h-0"}/>
-                </div>
-            </div>
-        )
-    }
-
-    if (top) {
-        return (
-            <div className={"flex items-end h-full w-[32px]"}>
-                <div className={"border-4 w-full h-1/2 flex flex-end justify-end items-end border-b-0 border-r-0 rounded-tl-2xl"}/>
-            </div>
-        )
-    }
-
-    if (bottom) {
-        return (
-            <div className={"flex items-start h-full w-[32px]"}>
-                <div className={"border-4 w-full h-1/2 flex flex-start justify-end items-start border-t-0 border-r-0 rounded-bl-2xl"}/>
-            </div>
-        )
-    }
-
-    return (
-        <div className={"flex items-start h-full w-[32px]"}>
-            <div className={"border-4 w-full h-[100%] -translate-y-1/2 flex flex-start justify-end items-start border-t-0 border-r-0 rounded-bl-2xl border-dashed"}/>
-        </div>
-    )
-}
