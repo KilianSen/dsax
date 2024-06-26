@@ -7,18 +7,27 @@ import {cn} from "../../utils/twmerger.ts";
 export function OccurrenceItem({ oip, itemPosition, customHead, customTail, hasNoHead, editable, onSubmit, onChange, classNames}:
     { oip: OccurrenceItemProps, onSubmit?: () => void, hasNoHead?: boolean, itemPosition: number, customHead?: ReactElement, customTail?: ReactElement, editable?: boolean, onChange?: (value: OccurrenceItemProps) => void, classNames?: {title?: ClassValue[], symbol?:ClassValue[], comment?: ClassValue[], date?: ClassValue[]} }) {
     const [editData, setEditData] = useState<OccurrenceItemProps>({ title: undefined, comment: undefined, date: undefined })
+    const [date, setDate] = useState<Date>(new Date(Date.now()));
+    const [direction, setDirection] = useState<"up"|"down"|"center"|"extra">("extra")
 
     useEffect(() => {
-        setEditData(oip);
-    }, []);
+        if (oip !== editData) {
+            setEditData(oip);
+        }
+    }, [editData, oip]);
 
     useEffect(() => {
-        onChange && onChange(editData);
-        console.log(3)
-    }, [editData, onChange]);
+        if (oip?.date !== date) {
+            setDate(oip?.date || new Date(Date.now()));
+        }
+    }, [date, oip?.date]);
 
-    const date = oip?.date || new Date(Date.now());
-    const direction = itemPosition === -1 ? "up" : (itemPosition === 0 ? "center" : (itemPosition === 1 ? "down" : "extra"));
+    useEffect(() => {
+        const newDirection = itemPosition === -1 ? "up" : (itemPosition === 0 ? "center" : (itemPosition === 1 ? "down" : "extra"));
+        if (newDirection !== direction) {
+            setDirection(newDirection);
+        }
+    }, [direction, itemPosition]);
 
     return (
         <div className={"flex mt-2"}>

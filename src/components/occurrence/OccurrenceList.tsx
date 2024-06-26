@@ -2,28 +2,40 @@ import {OccurrenceItemProps} from "../../utils/dataModel.ts";
 import {useEffect, useState} from "react";
 import {OccurrenceItem} from "./Occurrence.tsx";
 
-export function OccurrenceList({items, updateItems}: { items: OccurrenceItemProps[], updateItems: (items: OccurrenceItemProps[]) => void }) {
+type olEditState = {
+    editMode: boolean
+    newItem: OccurrenceItemProps
+}
+
+export function OccurrenceList({items, updateItems, defaultItem}:
+                                   {
+                                       items: OccurrenceItemProps[],
+                                       updateItems: (items: OccurrenceItemProps[]) => void,
+                                       defaultItem: OccurrenceItemProps}) {
+
+    const [defaultNew, setDefaultNew] = useState<OccurrenceItemProps>(defaultItem)
+
     const [occurrences, setOccurrences] = useState<OccurrenceItemProps[]>([])
-    const [editMode, setEditMode] = useState(false)
-
-    const defaultItem: OccurrenceItemProps = {title: "Add a new entry", comment: "Add a new entry", date: new Date(Date.now())}
-
-    const [newItem, setNewItem] = useState<OccurrenceItemProps>(defaultItem)
+    const [editMode, setEditMode] = useState<olEditState>({editMode: false, newItem: defaultNew})
 
     useEffect(() => {
-        console.log(2)
+        if (!defaultItem) {
+            setDefaultNew({title: "", date: new Date(), comment: ""})
+        }
+    }, [defaultItem]);
+
+    useEffect(() => {
+        setEditMode({editMode: editMode.editMode, newItem: defaultNew})
+    }, [defaultNew]);
+
+    useEffect(() => {
         setOccurrences(items)
     }, [items]);
 
-    useEffect(() => {
-        console.log(1)
-        if (!editMode) setNewItem(defaultItem)
-    }, [editMode]);
-
     const onSubmit = () => {
-        if (newItem) {
-            updateItems([...occurrences, newItem])
-            setNewItem(defaultItem)
+        if (editMode.newItem != defaultNew) {
+            updateItems([...occurrences, editMode.newItem])
+            setEditMode({editMode: false, newItem: defaultNew})
         }
     }
 
@@ -36,16 +48,16 @@ export function OccurrenceList({items, updateItems}: { items: OccurrenceItemProp
                 />
             })}
             <OccurrenceItem itemPosition={NaN}
-                            oip={newItem}
-                            editable={editMode}
+                            oip={editMode.newItem}
+                            editable={editMode.editMode}
                             hasNoHead={occurrences.length === 0}
                             onSubmit={() => {
                                 if (editMode) {
                                     onSubmit()
                                 }
-                                setEditMode(!editMode)
+                                setEditMode({editMode: !editMode.editMode, newItem: editMode.newItem})
                             }}
-                            onChange={(v) => {setNewItem(v)}}
+                            onChange={(v) => {setEditMode({editMode: editMode.editMode, newItem: v})}}
                             classNames={{title: ["text-2xl", "text-neutral-500"], comment: ["text-md text-neutral-500"], date: ["text-md text-neutral-500"], symbol: ["text-neutral-500"]}}
             />
         </div>
