@@ -1,4 +1,4 @@
-import {useEffect} from "react";
+import {Dispatch, SetStateAction, useEffect} from "react";
 import {ReactNode} from "react";
 import useFade from "./useFade.ts";
 
@@ -6,12 +6,12 @@ export default function FadeContainer({children, visible, initial, className}: {
     const [isVisible, setVisible, fadeProps] = useFade(initial || false);
 
     useEffect(() => {
-        setVisible(visible);
+        (setVisible as Dispatch<SetStateAction<boolean>>)(visible);
     }, []);
 
     useEffect(() => {
-        setVisible(visible);
+        (setVisible as Dispatch<SetStateAction<boolean>>)(visible);
     }, [setVisible, visible]);
 
-    return isVisible && <div className={className} {...fadeProps}>{children}</div>
+    return isVisible && <div className={className} {...fadeProps as {     style: {         animation: string     },     onAnimationEnd: () => (false | void) }}>{children}</div>
 }
