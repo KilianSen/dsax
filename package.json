@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://kiliansen.github.io/dsax/",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
