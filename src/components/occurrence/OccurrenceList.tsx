@@ -17,7 +17,7 @@ export function OccurrenceList({items, updateItems}: { items: OccurrenceItemProp
         <div>
             {occurrences.map((occurrence, index) => {
                 return <OccurrenceItem key={index}
-                                       itemPosition={index === 0 ? -1 : (index === occurrences.length - 1 ? 0 : 0)}
+                                       itemPosition={index == 0 ? 1 : (index === occurrences.length - 1 ? -1 : 0)}
                                        oip={occurrence}
                 />
             })}
