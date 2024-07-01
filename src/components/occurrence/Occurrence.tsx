@@ -5,6 +5,7 @@ import {ClassValue} from "clsx";
 import {cn} from "../../utils/twmerger.ts";
 import {Condition} from "../../utils/Condition.tsx";
 import FadeContainer from "../../utils/FadeContainer.tsx";
+import {EditSpan} from "../../utils/EditSpan.tsx";
 
 type OccurrenceElementProps = {
     oip: OccurrenceItemProps,
@@ -40,13 +41,12 @@ export function OccurrenceItem(props: OccurrenceElementProps) {
         setDisplayItem({...displayItem, date: new Date(e.target.value)})
         setDate(new Date(e.target.value))
     }
-    const onTextChange = (e: React.FormEvent<HTMLDivElement>, textType: "title" | "comment") => {
+    const onTextChange = (e: string | undefined, textType: "title" | "comment") => {
         if (!props.editable) {
             return
         }
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        setDisplayItem({...displayItem, [textType]: e.target.textContent || ""})
+        console.log(e, textType )
+        setDisplayItem({...displayItem, [textType]: e || ""})
     }
 
     useEffect(() => {
@@ -77,15 +77,8 @@ export function OccurrenceItem(props: OccurrenceElementProps) {
                             </div>
                         </Condition>
                         <div className={"grow"}>
-                            <div className={"flex justify-between gap-2 items-center"}>
-                                <div suppressContentEditableWarning={props.editable}
-                                     onInput={e => onTextChange(e, "title")}
-                                     className={cn("flex text-4xl", props.classNames?.title)}
-                                     contentEditable={props.editable}
-                                >
-                                    <Condition condition={!props.editable} children={displayItem?.title}/>
-                                    <Condition condition={!!props.editable} children={props.oip?.title}/>
-                                </div>
+                            <div className={"flex text-4xl justify-between gap-2 items-center"}>
+                                <EditSpan readonly={!props.editable} placeholder={"Change me!"} defaultValue={props.oip.title} onChange={(e) => onTextChange(e,"title")}/>
                             </div>
                             <div className={"flex justify-between gap-5"}>
                                 <>
@@ -100,14 +93,7 @@ export function OccurrenceItem(props: OccurrenceElementProps) {
                                                value={date.toISOString().split("T")[0]}/>
                                     </Condition>
                                 </>
-                                <div suppressContentEditableWarning={props.editable}
-                                     onInput={e => onTextChange(e, "comment")}
-                                     className={cn("px-5 text-right", props.classNames?.comment)}
-                                     contentEditable={props.editable}>
-
-                                    <Condition condition={!props.editable} children={displayItem?.comment}/>
-                                    <Condition condition={!!props.editable} children={props.oip.comment}/>
-                                </div>
+                                <EditSpan readonly={!props.editable} placeholder={"Change me!"} defaultValue={props.oip.comment} onChange={(e) => onTextChange(e, "comment")}/>
                             </div>
                         </div>
                     </div>
